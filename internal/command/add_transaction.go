@@ -4,7 +4,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tomwright/finance-planner/internal/application/domain"
 	"github.com/tomwright/finance-planner/internal/application/service"
-	"github.com/tomwright/finance-planner/internal/errs"
 )
 
 func AddTransaction(profileService service.Profile) *cobra.Command {
@@ -17,15 +16,9 @@ func AddTransaction(profileService service.Profile) *cobra.Command {
 			amount, _ := cmd.Flags().GetInt64("amount")
 			tags, _ := cmd.Flags().GetStringArray("tags")
 
-			profile, err := profileService.LoadProfile(profileName)
+			profile, err := profileService.LoadOrCreateProfile(profileName)
 			if err != nil {
-				if err.Code() == errs.ErrUnknownProfile {
-					// if the profile wasn't found, just create one.
-					profile = domain.NewProfile()
-					profile.Name = profileName
-				} else {
-					return err
-				}
+				return err
 			}
 
 			// create the transaction.

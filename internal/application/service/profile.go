@@ -10,6 +10,9 @@ import (
 type Profile interface {
 	// LoadProfile loads the given profile.
 	LoadProfile(name string) (*domain.Profile, errs.Error)
+	// LoadOrCreateProfile loads the given profile.
+	// If it doesn't exist, a new one will be returned.
+	LoadOrCreateProfile(name string) (*domain.Profile, errs.Error)
 	// SaveProfile saves the given profile.
 	SaveProfile(profile *domain.Profile) errs.Error
 }
@@ -49,6 +52,21 @@ func (x *stdProfile) LoadProfile(name string) (*domain.Profile, errs.Error) {
 		return nil, nil
 	}
 
+	return profile, nil
+}
+
+// LoadOrCreateProfile loads the given profile.
+// If it doesn't exist, a new one will be returned.
+func (x *stdProfile) LoadOrCreateProfile(name string) (*domain.Profile, errs.Error) {
+	// load the profile
+	profile, err := x.LoadProfile(name)
+	if err != nil && err.Code() == errs.ErrUnknownProfile {
+		// the profile does not exist, so create one
+		profile = domain.NewProfile()
+		profile.Name = name
+	} else if err != nil {
+		return nil, err
+	}
 	return profile, nil
 }
 

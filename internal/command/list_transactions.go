@@ -16,15 +16,9 @@ func ListTransactions(profileService service.Profile) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			profileName, _ := cmd.Flags().GetString("profile")
 
-			profile, err := profileService.LoadProfile(profileName)
+			profile, err := profileService.LoadOrCreateProfile(profileName)
 			if err != nil {
-				if err.Code() == errs.ErrUnknownProfile {
-					// if the profile wasn't found, just create one.
-					profile = domain.NewProfile()
-					profile.Name = profileName
-				} else {
-					return err
-				}
+				return err
 			}
 
 			fmt.Printf("Profile: %s\nTransactions:\n", profile.Name)
