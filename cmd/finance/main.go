@@ -23,7 +23,7 @@ func main() {
 	}
 
 	profileRepo := repository.NewProfile(storageDir)
-	transactionRepo := repository.NewTransaction(storageDir)
+	transactionRepo := repository.NewJSONFileTransaction(storageDir)
 
 	profileService := service.NewProfileService(profileRepo, transactionRepo)
 

@@ -42,5 +42,9 @@ func ListTransactions(profileService service.Profile) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String("profile", "", "Profile to interact with")
+
+	_ = cmd.MarkFlagRequired("profile")
+
 	return cmd
 }

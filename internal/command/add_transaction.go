@@ -46,10 +46,12 @@ func AddTransaction(profileService service.Profile) *cobra.Command {
 		},
 	}
 
+	cmd.Flags().String("profile", "", "Profile to interact with")
 	cmd.Flags().String("label", "", "Transaction label")
 	cmd.Flags().Int64("amount", 0, "Transaction amount")
 	cmd.Flags().StringArray("tags", []string{}, "Tags to group the transaction")
 
+	_ = cmd.MarkFlagRequired("profile")
 	_ = cmd.MarkFlagRequired("label")
 	_ = cmd.MarkFlagRequired("amount")
 

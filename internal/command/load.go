@@ -12,12 +12,9 @@ func Load(profileService service.Profile) *cobra.Command {
 		Long:  `A quick and easy financial planner for the month.`,
 	}
 
-	cmd.PersistentFlags().String("profile", "", "Profile to interact with")
-
-	_ = cmd.MarkPersistentFlagRequired("profile")
-
 	cmd.AddCommand(ListTransactions(profileService))
 	cmd.AddCommand(AddTransaction(profileService))
+	cmd.AddCommand(HTTPServer(profileService))
 
 	return cmd
 }

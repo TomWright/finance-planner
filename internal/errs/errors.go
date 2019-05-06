@@ -3,7 +3,8 @@ package errs
 import "fmt"
 
 const (
-	ErrUnknown = "UnknownError"
+	ErrUnknown        = "UnknownError"
+	ErrShutdownSignal = "ShutdownSignal"
 
 	// Storage errors
 	ErrCouldNotWriteSaveFile = "CouldNotWriteSaveFile"

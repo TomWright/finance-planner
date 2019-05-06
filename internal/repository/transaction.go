@@ -16,7 +16,9 @@ type Transaction interface {
 	SaveTransactionsForProfile(profileName string, transactions *domain.TransactionCollection) errs.Error
 }
 
-func NewTransaction(storageDir string) Transaction {
+// NewJSONFileTransaction returns a repository that stores
+// transactions in a JSON file on disk.
+func NewJSONFileTransaction(storageDir string) Transaction {
 	return &jsonTransaction{
 		storageDir: storageDir,
 	}
