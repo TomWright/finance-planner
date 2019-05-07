@@ -1,10 +1,9 @@
-package http
+package frontend
 
 import (
 	"context"
 	"fmt"
 	"github.com/go-chi/chi"
-	"github.com/tomwright/finance-planner/internal/application/service"
 	"net"
 	"net/http"
 	"sync"
@@ -15,16 +14,14 @@ import (
 // It is expected that Start will be executed in a go routine.
 // wg.Add(1) should have been called already.
 // If shutdownCh is closed, the server should be shutdown.
-func Start(profileService service.Profile, listenAddress string, wg *sync.WaitGroup, errCh chan error, shutdownCh chan struct{}) {
+func Start(assetsPath string, backendBaseURL string, listenAddress string, wg *sync.WaitGroup, errCh chan error, shutdownCh chan struct{}) {
 	// Ensure the wg.Done() is decremented.
 	defer wg.Done()
 
 	r := chi.NewRouter()
 
-	r.Use(Recoverer, Logger, CORS, Options)
-
-	for _, h := range loadHandlers(profileService) {
-		h.Bind(r)
+	varMapping := map[string]string{
+		"[[REPLACE.BACKEND_BASE_URL]]": backendBaseURL,
 	}
 
 	server := &http.Server{
@@ -34,6 +31,17 @@ func Start(profileService service.Profile, listenAddress string, wg *sync.WaitGr
 	startErrCh := make(chan error)
 
 	startFn := func() {
+		// Load a JS file with const config values in it.
+		// These are replaced dynamically.
+		jsConfigHandler, err := GetJSConfigHandler(assetsPath, varMapping)
+		if err != nil {
+			startErrCh <- err
+		}
+		r.Get("/vars.js", jsConfigHandler)
+
+		// Load any other static files.
+		r.Get("/*", GetFileSystemHandler(assetsPath, "/"))
+
 		listener, err := net.Listen("tcp", listenAddress)
 		if err != nil {
 			startErrCh <- fmt.Errorf("could not listen on address `%s`: %s", listenAddress, err)
@@ -65,14 +73,5 @@ func Start(profileService service.Profile, listenAddress string, wg *sync.WaitGr
 	case <-shutdownCh:
 		// Call stopFn() to gracefully shutdown.
 		stopFn()
-	}
-}
-
-// loadHandlers returns all of the handlers to be served via HTTP.
-func loadHandlers(profileService service.Profile) []Handler {
-	return []Handler{
-		NewListTransactionsHandler(profileService),
-		NewAddTransactionHandler(profileService),
-		NewStatsTransactionsHandler(profileService),
 	}
 }

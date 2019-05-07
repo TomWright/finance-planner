@@ -8,13 +8,14 @@ import (
 func Load(profileService service.Profile) *cobra.Command {
 	cmd := &cobra.Command{
 		Use:   "finance",
-		Short: "Finance iss a quick and easy financial planner.",
+		Short: "Finance is a quick and easy financial planner.",
 		Long:  `A quick and easy financial planner for the month.`,
 	}
 
 	cmd.AddCommand(ListTransactions(profileService))
 	cmd.AddCommand(AddTransaction(profileService))
-	cmd.AddCommand(HTTPServer(profileService))
+	cmd.AddCommand(HTTPAPI(profileService))
+	cmd.AddCommand(HTTPFrontend())
 
 	return cmd
 }

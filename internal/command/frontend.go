@@ -3,19 +3,20 @@ package command
 import (
 	"fmt"
 	"github.com/spf13/cobra"
-	"github.com/tomwright/finance-planner/internal/application/service"
 	"github.com/tomwright/finance-planner/internal/errs"
-	"github.com/tomwright/finance-planner/internal/http"
+	"github.com/tomwright/finance-planner/internal/frontend"
 	"github.com/tomwright/finance-planner/internal/util/shutdownutil"
 	"sync"
 )
 
-func HTTPServer(profileService service.Profile) *cobra.Command {
+func HTTPFrontend() *cobra.Command {
 	cmd := &cobra.Command{
-		Use:   "http",
+		Use:   "frontend",
 		Short: "Run a HTTP server.",
 		RunE: func(cmd *cobra.Command, args []string) error {
 			listenAddress, _ := cmd.Flags().GetString("listen-address")
+			baseURL, _ := cmd.Flags().GetString("base-url")
+			assetsPath, _ := cmd.Flags().GetString("assets")
 
 			// wg contains a counter for all services started in this command.
 			wg := &sync.WaitGroup{}
@@ -30,7 +31,7 @@ func HTTPServer(profileService service.Profile) *cobra.Command {
 
 			// Start HTTP service.
 			wg.Add(1)
-			go http.Start(profileService, listenAddress, wg, errCh, shutdownCh)
+			go frontend.Start(assetsPath, baseURL, listenAddress, wg, errCh, shutdownCh)
 
 			// Block until errCh message
 			err := <-errCh
@@ -56,6 +57,10 @@ func HTTPServer(profileService service.Profile) *cobra.Command {
 	}
 
 	cmd.Flags().String("listen-address", ":80", "HTTP listen address")
+	cmd.Flags().String("base-url", "http://localhost:8080", "Base URL for the API")
+	cmd.Flags().String("assets", "", "The path to the frontend server assets")
+
+	_ = cmd.MarkFlagRequired("assets")
 
 	return cmd
 }
