@@ -70,5 +70,7 @@ func Start(profileService service.Profile, listenAddress string, wg *sync.WaitGr
 func loadHandlers(profileService service.Profile) []Handler {
 	return []Handler{
 		NewListTransactionsHandler(profileService),
+		NewAddTransactionHandler(profileService),
+		NewStatsTransactionsHandler(profileService),
 	}
 }

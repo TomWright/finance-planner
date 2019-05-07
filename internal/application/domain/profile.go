@@ -1,6 +1,9 @@
 package domain
 
-import "github.com/tomwright/finance-planner/internal/errs"
+import (
+	"github.com/tomwright/finance-planner/internal/errs"
+	"net/http"
+)
 
 // Profile represents a single profile, for which we can add transactions.
 type Profile struct {
@@ -13,7 +16,8 @@ func (x Profile) Validate() errs.Error {
 	if x.Name == "" {
 		return errs.New().
 			WithCode(errs.ErrInvalidName).
-			WithMessage("missing profile name")
+			WithMessage("missing profile name").
+			WithStatusCode(http.StatusBadRequest)
 	}
 	return nil
 }

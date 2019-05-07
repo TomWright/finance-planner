@@ -46,8 +46,10 @@ func New() Error {
 // Error provides some standard functions for internal errors.
 type Error interface {
 	Code() string
+	StatusCode() int
 	Message() string
 	WithCode(code string) Error
+	WithStatusCode(status int) Error
 	WithMessage(message string) Error
 	AppendMessage(message string) Error
 	PrefixMessage(message string) Error
@@ -56,12 +58,17 @@ type Error interface {
 
 // Err implements Error.
 type Err struct {
-	code    string
-	message string
+	code       string
+	statusCode int
+	message    string
 }
 
 func (x *Err) Code() string {
 	return x.code
+}
+
+func (x *Err) StatusCode() int {
+	return x.statusCode
 }
 
 func (x *Err) Message() string {
@@ -70,6 +77,11 @@ func (x *Err) Message() string {
 
 func (x *Err) WithCode(code string) Error {
 	x.code = code
+	return x
+}
+
+func (x *Err) WithStatusCode(statusCode int) Error {
+	x.statusCode = statusCode
 	return x
 }
 

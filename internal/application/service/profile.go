@@ -4,6 +4,7 @@ import (
 	"github.com/tomwright/finance-planner/internal/application/domain"
 	"github.com/tomwright/finance-planner/internal/errs"
 	"github.com/tomwright/finance-planner/internal/repository"
+	"net/http"
 )
 
 // Profile allows you to load and save a full profile.
@@ -40,7 +41,8 @@ func (x *stdProfile) LoadProfile(name string) (*domain.Profile, errs.Error) {
 		return nil, errs.
 			New().
 			WithCode(errs.ErrUnknownProfile).
-			WithMessage("that profile does not exist")
+			WithMessage("that profile does not exist").
+			WithStatusCode(http.StatusBadRequest)
 	}
 	if err != nil {
 		return nil, nil

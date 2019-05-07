@@ -12,15 +12,22 @@ type Handler interface {
 	Bind(r chi.Router)
 }
 
-func sendError(err error, statusCode int, rw http.ResponseWriter) {
+func sendError(err error, rw http.ResponseWriter) {
 	e := errs.FromErr(err)
+
+	if e.Code() == "" {
+		e = e.WithCode(errs.ErrUnknown)
+	}
+	if e.StatusCode() == 0 {
+		e = e.WithStatusCode(http.StatusInternalServerError)
+	}
 
 	resp := map[string]interface{}{
 		"code":  e.Code(),
 		"error": e.Message(),
 	}
 
-	sendResponse(resp, statusCode, rw)
+	sendResponse(resp, e.StatusCode(), rw)
 }
 
 func sendResponse(body interface{}, statusCode int, rw http.ResponseWriter) {
@@ -31,6 +38,7 @@ func sendResponse(body interface{}, statusCode int, rw http.ResponseWriter) {
 		return
 	}
 
+	rw.Header().Add("Content-Type", "application/json")
 	rw.WriteHeader(statusCode)
 	_, _ = rw.Write(bytes)
 }

@@ -25,7 +25,7 @@ func (x *listTransactionsHandler) handle(rw http.ResponseWriter, r *http.Request
 
 	profile, err := x.profileService.LoadOrCreateProfile(profileName)
 	if err != nil {
-		sendError(err, http.StatusInternalServerError, rw)
+		sendError(err, rw)
 		return
 	}
 
@@ -36,6 +36,7 @@ func (x *listTransactionsHandler) handle(rw http.ResponseWriter, r *http.Request
 		tags := make([]string, 0)
 		tags = append(tags, transactions[i].Tags...)
 		transactionsData[i] = map[string]interface{}{
+			"uuid":   transactions[i].UUID,
 			"label":  transactions[i].Label,
 			"amount": transactions[i].Amount,
 			"tags":   tags,

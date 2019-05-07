@@ -1,19 +1,23 @@
 package domain
 
 import (
+	"github.com/google/uuid"
 	"github.com/tomwright/finance-planner/internal/errs"
+	"net/http"
 	"sync"
 )
 
 // NewTransaction returns a new Transaction.
 func NewTransaction() Transaction {
 	return Transaction{
+		UUID: uuid.New().String(),
 		Tags: []string{},
 	}
 }
 
 // Transaction represents a single transaction.
 type Transaction struct {
+	UUID  string
 	Label string
 	// Amount is the amount of funds transferred.
 	Amount int64
@@ -26,14 +30,22 @@ func (x Transaction) Validate() errs.Error {
 	if x.Label == "" {
 		return errs.New().
 			WithCode(errs.ErrInvalidLabel).
-			WithMessage("missing transaction label")
+			WithMessage("missing transaction label").
+			WithStatusCode(http.StatusBadRequest)
 	}
 	if x.Amount == 0 {
 		return errs.New().
 			WithCode(errs.ErrInvalidAmount).
-			WithMessage("transaction amount must not be 0")
+			WithMessage("transaction amount must not be 0").
+			WithStatusCode(http.StatusBadRequest)
 	}
 	return nil
+}
+
+// WithUUID returns a copy of x with the given uuid.
+func (x Transaction) WithUUID(uuid string) Transaction {
+	x.UUID = uuid
+	return x
 }
 
 // WithLabel returns a copy of x with the given label.
@@ -137,4 +149,14 @@ func (x *TransactionCollection) Sum() (int64, error) {
 		return nil
 	})
 	return sum, err
+}
+
+// GetByUUID searches the collection for a transaction with the given UUID.
+func (x *TransactionCollection) GetByUUID(uuid string) *Transaction {
+	for _, t := range x.All() {
+		if t.UUID == uuid {
+			return &t
+		}
+	}
+	return nil
 }

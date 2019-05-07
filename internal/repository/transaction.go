@@ -3,6 +3,7 @@ package repository
 import (
 	"encoding/json"
 	"fmt"
+	"github.com/google/uuid"
 	"github.com/tomwright/finance-planner/internal/application/domain"
 	"github.com/tomwright/finance-planner/internal/errs"
 	"io/ioutil"
@@ -25,6 +26,7 @@ func NewJSONFileTransaction(storageDir string) Transaction {
 }
 
 type jsonStoredTransaction struct {
+	UUID   string   `json:"uuid"`
 	Label  string   `json:"label"`
 	Amount int64    `json:"amount"`
 	Tags   []string `json:"tags"`
@@ -57,7 +59,11 @@ func (x *jsonTransaction) LoadTransactionsForProfile(profileName string) (*domai
 
 	c := domain.NewTransactionCollection()
 	for _, t := range storedTransactions {
+		if t.UUID == "" {
+			t.UUID = uuid.New().String()
+		}
 		c.Add(domain.NewTransaction().
+			WithUUID(t.UUID).
 			WithAmount(t.Amount).
 			WithLabel(t.Label).
 			WithTags(t.Tags...),
@@ -71,6 +77,7 @@ func (x *jsonTransaction) SaveTransactionsForProfile(profileName string, transac
 	storedTransactions := make([]jsonStoredTransaction, 0)
 	err := transactions.Range(nil, func(t domain.Transaction) error {
 		newT := jsonStoredTransaction{
+			UUID:   t.UUID,
 			Label:  t.Label,
 			Amount: t.Amount,
 			Tags:   t.Tags,
