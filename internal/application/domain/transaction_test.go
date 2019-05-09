@@ -18,10 +18,7 @@ func TestTransactionCollection_Sum(t *testing.T) {
 		domain.NewTransaction().WithAmount(-200),
 	)
 
-	sum, err := c.Sum()
-	if err != nil {
-		t.Errorf("unexpected error: %s", err)
-	}
+	sum := c.Sum()
 	if exp, got := int64(97), sum; exp != got {
 		t.Errorf("expected sum %d, got %d", exp, got)
 	}

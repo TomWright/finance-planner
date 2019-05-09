@@ -6,19 +6,19 @@ const (
 	ErrUnknown        = "UnknownError"
 	ErrShutdownSignal = "ShutdownSignal"
 
-	// Storage errors
-	ErrCouldNotWriteSaveFile = "CouldNotWriteSaveFile"
-	ErrCouldNotReadSaveFile  = "CouldNotReadSaveFile"
-
 	// Profile errors
 
-	ErrUnknownProfile = "UnknownProfile"
-	ErrInvalidName    = "InvalidName"
+	ErrUnknownProfile   = "UnknownProfile"
+	ErrInvalidProfileID = "InvalidProfileID"
+	ErrInvalidName      = "InvalidName"
 
 	// Transaction errors
 
-	ErrInvalidLabel  = "InvalidLabel"
-	ErrInvalidAmount = "InvalidAmount"
+	ErrUnknownTransaction   = "UnknownTransaction"
+	ErrInvalidTransactionID = "InvalidTransactionID"
+	ErrInvalidLabel         = "InvalidLabel"
+	ErrInvalidAmount        = "InvalidAmount"
+	ErrInvalidTag           = "InvalidTag"
 )
 
 // FromErr converts an error to an Error.

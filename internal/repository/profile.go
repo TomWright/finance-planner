@@ -1,79 +1,111 @@
 package repository
 
 import (
-	"encoding/json"
+	"database/sql"
 	"fmt"
 	"github.com/tomwright/finance-planner/internal/application/domain"
 	"github.com/tomwright/finance-planner/internal/errs"
-	"io/ioutil"
-	"os"
-	"path/filepath"
+	"net/http"
 )
 
 // Profile allows you to load and save a full profile.
 type Profile interface {
-	// LoadProfile loads the given profile.
-	LoadProfile(name string) (*domain.Profile, errs.Error)
-	// SaveProfile saves the given profile.
-	SaveProfile(profile *domain.Profile) errs.Error
+	// Init prepares the repository for use later on.
+	Init() error
+
+	// LoadProfile loads the given profile by id.
+	LoadProfileByID(id string) (*domain.Profile, errs.Error)
+	// LoadProfile loads the given profile by name.
+	LoadProfileByName(name string) (*domain.Profile, errs.Error)
+	// CreateProfile creates the given profile.
+	CreateProfile(profile *domain.Profile) errs.Error
+	// UpdateProfile updates the given profile.
+	UpdateProfile(profile *domain.Profile) errs.Error
 }
 
-func NewProfile(storageDir string) Profile {
-	return &jsonProfile{
-		storageDir: storageDir,
+func NewSQLiteProfile(db *sql.DB) Profile {
+	return &sqliteProfile{
+		db: db,
 	}
 }
 
-type jsonStoredProfile struct {
-	Name string `json:"name"`
+// sqliteProfile implements Profile
+type sqliteProfile struct {
+	db *sql.DB
 }
 
-// jsonProfile implements Profile
-type jsonProfile struct {
-	storageDir string
-}
-
-func (x *jsonProfile) getProfileFilePath(profileName string) string {
-	return fmt.Sprintf("%s.json", filepath.Join(x.storageDir, profileName))
-}
-
-// LoadProfile loads the given profile.
-func (x *jsonProfile) LoadProfile(name string) (*domain.Profile, errs.Error) {
-	bytes, err := ioutil.ReadFile(x.getProfileFilePath(name))
+// Init prepares the repository for use later on.
+func (x *sqliteProfile) Init() error {
+	query := `BEGIN;
+	CREATE TABLE IF NOT EXISTS profiles (
+		id VARCHAR(255) PRIMARY KEY,
+		name VARCHAR(255) NOT NULL
+	);
+	CREATE INDEX IF NOT EXISTS profiles_name ON profiles (name);
+	COMMIT;`
+	_, err := x.db.Exec(query)
 	if err != nil {
-		if os.IsNotExist(err) {
-			// the profile save file did not exist
-			return nil, nil
-		}
-		return nil, errs.FromErr(err).WithCode(errs.ErrCouldNotReadSaveFile)
+		return fmt.Errorf("could not create profiles table: %s", err)
 	}
-
-	var p jsonStoredProfile
-
-	if err := json.Unmarshal(bytes, &p); err != nil {
-		return nil, errs.FromErr(err)
-	}
-
-	profile := domain.NewProfile()
-	profile.Name = p.Name
-
-	return profile, nil
+	return nil
 }
 
-// SaveProfile saves the given profile.
-func (x *jsonProfile) SaveProfile(profile *domain.Profile) errs.Error {
-	storedProfile := jsonStoredProfile{
-		Name: profile.Name,
-	}
+// LoadProfile loads the given profile by id.
+func (x *sqliteProfile) LoadProfileByID(id string) (*domain.Profile, errs.Error) {
+	query := `SELECT id, name FROM profiles WHERE id = ?;`
+	row := x.db.QueryRow(query, id)
 
-	bytes, err := json.Marshal(storedProfile)
+	res := domain.NewProfile()
+
+	err := row.Scan(&res.ID, &res.Name)
+	if err == sql.ErrNoRows {
+		return nil, errs.New().
+			WithCode(errs.ErrUnknownProfile).
+			WithStatusCode(http.StatusNotFound).
+			WithMessage("profile id not found")
+	}
 	if err != nil {
-		return errs.FromErr(err)
+		return nil, errs.FromErr(err).PrefixMessage("could not scan row: ")
 	}
+	return res, nil
+}
 
-	if err := ioutil.WriteFile(x.getProfileFilePath(profile.Name), bytes, 0644); err != nil {
-		return errs.FromErr(err).WithCode(errs.ErrCouldNotWriteSaveFile)
+// LoadProfile loads the given profile by name.
+func (x *sqliteProfile) LoadProfileByName(name string) (*domain.Profile, errs.Error) {
+	query := `SELECT id, name FROM profiles WHERE name = ?;`
+	row := x.db.QueryRow(query, name)
+
+	res := domain.NewProfile()
+
+	err := row.Scan(&res.ID, &res.Name)
+	if err == sql.ErrNoRows {
+		return nil, errs.New().
+			WithCode(errs.ErrUnknownProfile).
+			WithStatusCode(http.StatusNotFound).
+			WithMessage("profile name not found")
 	}
+	if err != nil {
+		return nil, errs.FromErr(err).PrefixMessage("could not scan row: ")
+	}
+	return res, nil
+}
 
+// CreateProfile creates the given profile.
+func (x *sqliteProfile) CreateProfile(profile *domain.Profile) errs.Error {
+	query := `INSERT INTO profiles (id, name) VALUES(?, ?);`
+	_, err := x.db.Exec(query, profile.ID, profile.Name)
+	if err != nil {
+		return errs.FromErr(err).PrefixMessage("could not insert row: ")
+	}
+	return nil
+}
+
+// UpdateProfile updates the given profile.
+func (x *sqliteProfile) UpdateProfile(profile *domain.Profile) errs.Error {
+	query := `UPDATE profiles SET name = ? WHERE id = ?;`
+	_, err := x.db.Exec(query, profile.Name, profile.ID)
+	if err != nil {
+		return errs.FromErr(err).PrefixMessage("could not update row: ")
+	}
 	return nil
 }

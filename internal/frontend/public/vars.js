@@ -1,1 +1,0 @@
-const backendBaseUrl = "[[REPLACE.BACKEND_BASE_URL]]";

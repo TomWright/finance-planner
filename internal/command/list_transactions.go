@@ -16,27 +16,35 @@ func ListTransactions(profileService service.Profile) *cobra.Command {
 		RunE: func(cmd *cobra.Command, args []string) error {
 			profileName, _ := cmd.Flags().GetString("profile")
 
-			profile, err := profileService.LoadOrCreateProfile(profileName)
+			profile, err := profileService.LoadProfileByName(profileName)
 			if err != nil {
 				return err
 			}
 
-			fmt.Printf("Profile: %s\nTransactions:\n", profile.Name)
-			if err := profile.Transactions.Range(nil, func(t domain.Transaction) error {
+			printTransactionsFn := func(t *domain.Transaction) error {
 				tagStr := strings.Join(t.Tags, ", ")
 				fmt.Printf("\t%s - %d - [%s]\n", t.Label, t.Amount, tagStr)
 				return nil
-			}); err != nil {
+			}
+
+			incomingTransactions := profile.Transactions.Subset(func(t *domain.Transaction) bool {
+				return t.Amount > 0
+			})
+			outgoingTransactions := profile.Transactions.Subset(func(t *domain.Transaction) bool {
+				return t.Amount < 0
+			})
+
+			fmt.Printf("Profile: %s\n", profile.Name)
+			fmt.Printf("Incoming Transactions (%d):\n", incomingTransactions.Sum())
+			if err := incomingTransactions.Range(nil, printTransactionsFn); err != nil {
+				return errs.FromErr(err)
+			}
+			fmt.Printf("Outgoing Transactions (%d):\n", outgoingTransactions.Sum())
+			if err := outgoingTransactions.Range(nil, printTransactionsFn); err != nil {
 				return errs.FromErr(err)
 			}
 
-			{
-				sum, err := profile.Transactions.Sum()
-				if err != nil {
-					return errs.FromErr(err)
-				}
-				fmt.Printf("End balance: %d\n", sum)
-			}
+			fmt.Printf("End balance: %d\n", profile.Transactions.Sum())
 
 			return nil
 		},

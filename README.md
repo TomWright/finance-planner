@@ -22,13 +22,12 @@ finance list-transactions --profile=tom
 Output:
 ```
 Profile: tom
-Transactions:
-	Monthly salary - 2000 - [salary]
-	Train ticket - -430 - [commute]
-End balance: 2570
+Incoming Transactions (250000):
+        Salary - 319700 - [salary,perkbox]
+Outgoing Transactions (-1000):
+        Spending - -10000 - [food]
+End balance: 240000
 ```
 
 ## Storage
-The save files are current stored in plain text under `~/finance_planner`.
-
-This may be changed in the future but it is fine for now.
+Data is stored in a SQLite database at `~/finance_planner/finance.db`.

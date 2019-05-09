@@ -70,9 +70,5 @@ func Start(profileService service.Profile, listenAddress string, wg *sync.WaitGr
 
 // loadHandlers returns all of the handlers to be served via HTTP.
 func loadHandlers(profileService service.Profile) []Handler {
-	return []Handler{
-		NewListTransactionsHandler(profileService),
-		NewAddTransactionHandler(profileService),
-		NewStatsTransactionsHandler(profileService),
-	}
+	return []Handler{}
 }

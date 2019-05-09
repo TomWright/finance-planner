@@ -16,29 +16,20 @@ func AddTransaction(profileService service.Profile) *cobra.Command {
 			amount, _ := cmd.Flags().GetInt64("amount")
 			tags, _ := cmd.Flags().GetStringArray("tags")
 
-			profile, err := profileService.LoadOrCreateProfile(profileName)
+			profile, err := profileService.LoadOrCreateProfileByName(profileName)
 			if err != nil {
 				return err
 			}
 
 			// create the transaction.
-			t := domain.NewTransaction().
-				WithLabel(label).
-				WithAmount(amount)
-			if tags != nil {
-				t = t.WithTags(tags...)
-			}
-
-			// validate the transaction.
-			if err := t.Validate(); err != nil {
-				return err
-			}
-
-			// add the transaction to the profile.
-			profile.Transactions.Add(t)
+			t := domain.NewTransaction()
+			t.Label = label
+			t.Amount = amount
+			t.ProfileID = profile.ID
+			t.Tags = tags
 
 			// save the profile.
-			if err := profileService.SaveProfile(profile); err != nil {
+			if err := profileService.CreateTransaction(t); err != nil {
 				return err
 			}
 
