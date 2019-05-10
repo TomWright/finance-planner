@@ -111,7 +111,7 @@ func (x *stdProfile) LoadOrCreateProfileByName(name string) (*domain.Profile, er
 // CreateProfile creates the given profile, but does not affect transactions.
 func (x *stdProfile) CreateProfile(profile *domain.Profile) errs.Error {
 	if profile.ID == "" {
-		profile.ID = "profile:" + uuid.New().String()
+		profile.ID = "pro:" + uuid.New().String()
 	}
 	if err := x.validator.Profile(profile); err != nil {
 		return err
@@ -130,7 +130,7 @@ func (x *stdProfile) UpdateProfile(profile *domain.Profile) errs.Error {
 // CreateTransaction creates the given transaction.
 func (x *stdProfile) CreateTransaction(transaction *domain.Transaction) errs.Error {
 	if transaction.ID == "" {
-		transaction.ID = "transaction:" + uuid.New().String()
+		transaction.ID = "tra:" + uuid.New().String()
 	}
 	if err := x.validator.Transaction(transaction); err != nil {
 		return err

@@ -6,7 +6,6 @@ import (
 	"github.com/spf13/cobra"
 	"github.com/tomwright/finance-planner/internal/application/domain"
 	"github.com/tomwright/finance-planner/internal/application/service"
-	"math"
 	"os"
 	"strings"
 )
@@ -23,22 +22,37 @@ func ListTransactions(profileService service.Profile) *cobra.Command {
 				return err
 			}
 
-			fmt.Printf("Profile: %s\n", profile.Name)
+			in, _ := cmd.Flags().GetBool("in")
+			out, _ := cmd.Flags().GetBool("out")
+			if in && out {
+				in = false
+				out = false
+			}
 
-			outputTransactions("Incoming Transactions", profile.Transactions.Subset(func(t *domain.Transaction) bool {
-				return t.Amount > 0
-			}))
-			outputTransactions("Outgoing Transactions", profile.Transactions.Subset(func(t *domain.Transaction) bool {
-				return t.Amount < 0
-			}))
+			transactions := profile.Transactions
+			title := "All transactions"
+			if in {
+				title = "Incoming transactions"
+				transactions = profile.Transactions.Subset(func(t *domain.Transaction) bool {
+					return t.Amount > 0
+				})
+			}
+			if out {
+				title = "Outgoing transactions"
+				transactions = profile.Transactions.Subset(func(t *domain.Transaction) bool {
+					return t.Amount < 0
+				})
+			}
 
-			fmt.Printf("End balance: £%v\n", float64(profile.Transactions.Sum())/100)
+			outputTransactions(title, transactions)
 
 			return nil
 		},
 	}
 
 	cmd.Flags().String("profile", "", "Profile to interact with")
+	cmd.Flags().Bool("in", false, "Only list incoming transactions")
+	cmd.Flags().Bool("out", false, "Only list outgoing transactions")
 
 	_ = cmd.MarkFlagRequired("profile")
 
@@ -48,13 +62,14 @@ func ListTransactions(profileService service.Profile) *cobra.Command {
 func outputTransactions(title string, collection *domain.TransactionCollection) {
 	outputTable := tablewriter.NewWriter(os.Stdout)
 	outputTable.SetAutoFormatHeaders(false)
-	outputTable.SetHeader([]string{"ID", "Label", "Amount", "Tags"})
+	outputTable.SetHeader([]string{"ID", "Label", "Tags", "Amount"})
+	outputTable.SetAutoWrapText(false)
+	outputTable.SetCaption(true, title)
 
-	fmt.Printf("%s:\n", title)
 	_ = collection.Range(nil, func(t *domain.Transaction) error {
-		outputTable.Append([]string{t.ID, t.Label, "£" + fmt.Sprint(math.Abs(float64(t.Amount)/100)), strings.Join(t.Tags, ", ")})
+		outputTable.Append([]string{t.ID, t.Label, strings.Join(t.Tags, ", "), "£" + fmt.Sprint(float64(t.Amount)/100)})
 		return nil
 	})
-	outputTable.SetFooter([]string{"", "", "£" + fmt.Sprint(math.Abs(float64(collection.Sum())/100)), ""})
+	outputTable.SetFooter([]string{"", "", "Total", "£" + fmt.Sprint(float64(collection.Sum())/100)})
 	outputTable.Render()
 }
