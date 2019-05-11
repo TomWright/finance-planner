@@ -130,7 +130,14 @@ func (x *stdProfile) UpdateProfile(profile *domain.Profile) errs.Error {
 }
 
 func (x *stdProfile) LoadTransactionByID(id string) (*domain.Transaction, errs.Error) {
-	return x.transactionRepo.LoadTransactionByID(id)
+	t, err := x.transactionRepo.LoadTransactionByID(id)
+	if err != nil {
+		return nil, err
+	}
+	if err := x.initLoadedTransaction(t); err != nil {
+		return nil, err
+	}
+	return t, nil
 }
 
 // CreateTransaction creates the given transaction.

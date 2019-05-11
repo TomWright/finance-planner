@@ -39,7 +39,7 @@ func UpdateTransaction(profileService service.Profile) *cobra.Command {
 			if amount != 0 {
 				t.Amount = amount
 			}
-			if tags != nil {
+			if len(tags) > 0 {
 				t.Tags = tags
 			}
 
