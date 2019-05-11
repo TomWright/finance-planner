@@ -21,6 +21,8 @@ type Profile interface {
 	// UpdateProfile updates the given profile, but does not affect transactions.
 	UpdateProfile(profile *domain.Profile) errs.Error
 
+	// LoadTransactionByID loads the given transaction.
+	LoadTransactionByID(id string) (*domain.Transaction, errs.Error)
 	// CreateTransaction creates the given transaction.
 	CreateTransaction(transaction *domain.Transaction) errs.Error
 	// UpdateTransaction updates the given transaction.
@@ -125,6 +127,10 @@ func (x *stdProfile) UpdateProfile(profile *domain.Profile) errs.Error {
 		return err
 	}
 	return x.profileRepo.UpdateProfile(profile)
+}
+
+func (x *stdProfile) LoadTransactionByID(id string) (*domain.Transaction, errs.Error) {
+	return x.transactionRepo.LoadTransactionByID(id)
 }
 
 // CreateTransaction creates the given transaction.

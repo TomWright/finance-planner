@@ -14,6 +14,7 @@ func Load(profileService service.Profile) *cobra.Command {
 
 	cmd.AddCommand(ListTransactions(profileService))
 	cmd.AddCommand(AddTransaction(profileService))
+	cmd.AddCommand(UpdateTransaction(profileService))
 	cmd.AddCommand(HTTPAPI(profileService))
 
 	return cmd
