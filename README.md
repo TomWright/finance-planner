@@ -8,6 +8,11 @@ You can add transactions against a profile, and tag these transactions to get a 
 
 Download a binary from the releases page and save it as `/usr/local/bin/finance`.
 
+Depending on your platform, you'll likely want to save the following binary:
+- Mac OS: `finance_darwin_amd64`
+- Windows: `finance_windows_amd64`
+- Linux: `finance_linux_amd64`
+
 ## Usage
 
 ### Add a transaction
