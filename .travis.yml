@@ -12,26 +12,26 @@ before_deploy:
 #  - GOOS=android GOARCH=amd64 go build -o release/finance_android_amd64 cmd/finance/main.go
 #  - GOOS=android GOARCH=arm go build -o release/finance_android_arm cmd/finance/main.go
 #  - GOOS=android GOARCH=arm64 go build -o release/finance_android_arm64 cmd/finance/main.go
-  - GOOS=darwin GOARCH=386 go build -o release/finance_darwin_386 cmd/finance/main.go
+#  - GOOS=darwin GOARCH=386 go build -o release/finance_darwin_386 cmd/finance/main.go
   - GOOS=darwin GOARCH=amd64 go build -o release/finance_darwin_amd64 cmd/finance/main.go
-  - GOOS=darwin GOARCH=arm go build -o release/finance_darwin_arm cmd/finance/main.go
-  - GOOS=darwin GOARCH=arm64 go build -o release/finance_darwin_arm64 cmd/finance/main.go
+#  - GOOS=darwin GOARCH=arm go build -o release/finance_darwin_arm cmd/finance/main.go
+#  - GOOS=darwin GOARCH=arm64 go build -o release/finance_darwin_arm64 cmd/finance/main.go
 #  - GOOS=dragonfly GOARCH=amd64 go build -o release/finance_dragonfly_amd64 cmd/finance/main.go
 #  - GOOS=freebsd GOARCH=386 go build -o release/finance_freebsd_386 cmd/finance/main.go
 #  - GOOS=freebsd GOARCH=amd64 go build -o release/finance_freebsd_amd64 cmd/finance/main.go
 #  - GOOS=freebsd GOARCH=arm go build -o release/finance_freebsd_arm cmd/finance/main.go
 #  - GOOS=js GOARCH=wasm go build -o release/finance_js_wasm cmd/finance/main.go
-  - GOOS=linux GOARCH=386 go build -o release/finance_linux_386 cmd/finance/main.go
+#  - GOOS=linux GOARCH=386 go build -o release/finance_linux_386 cmd/finance/main.go
   - GOOS=linux GOARCH=amd64 go build -o release/finance_linux_amd64 cmd/finance/main.go
-  - GOOS=linux GOARCH=arm go build -o release/finance_linux_arm cmd/finance/main.go
-  - GOOS=linux GOARCH=arm64 go build -o release/finance_linux_arm64 cmd/finance/main.go
-  - GOOS=linux GOARCH=mips go build -o release/finance_linux_mips cmd/finance/main.go
-  - GOOS=linux GOARCH=mips64 go build -o release/finance_linux_mips64 cmd/finance/main.go
-  - GOOS=linux GOARCH=mips64le go build -o release/finance_linux_mips64le cmd/finance/main.go
-  - GOOS=linux GOARCH=mipsle go build -o release/finance_linux_mipsle cmd/finance/main.go
-  - GOOS=linux GOARCH=ppc64 go build -o release/finance_linux_ppc64 cmd/finance/main.go
-  - GOOS=linux GOARCH=ppc64le go build -o release/finance_linux_ppc64le cmd/finance/main.go
-  - GOOS=linux GOARCH=s390x go build -o release/finance_linux_s390x cmd/finance/main.go
+#  - GOOS=linux GOARCH=arm go build -o release/finance_linux_arm cmd/finance/main.go
+#  - GOOS=linux GOARCH=arm64 go build -o release/finance_linux_arm64 cmd/finance/main.go
+#  - GOOS=linux GOARCH=mips go build -o release/finance_linux_mips cmd/finance/main.go
+#  - GOOS=linux GOARCH=mips64 go build -o release/finance_linux_mips64 cmd/finance/main.go
+#  - GOOS=linux GOARCH=mips64le go build -o release/finance_linux_mips64le cmd/finance/main.go
+#  - GOOS=linux GOARCH=mipsle go build -o release/finance_linux_mipsle cmd/finance/main.go
+#  - GOOS=linux GOARCH=ppc64 go build -o release/finance_linux_ppc64 cmd/finance/main.go
+#  - GOOS=linux GOARCH=ppc64le go build -o release/finance_linux_ppc64le cmd/finance/main.go
+#  - GOOS=linux GOARCH=s390x go build -o release/finance_linux_s390x cmd/finance/main.go
 #  - GOOS=nacl GOARCH=386 go build -o release/finance_nacl_386 cmd/finance/main.go
 #  - GOOS=nacl GOARCH=amd64p32 go build -o release/finance_nacl_amd64p32 cmd/finance/main.go
 #  - GOOS=nacl GOARCH=arm go build -o release/finance_nacl_arm cmd/finance/main.go
@@ -45,9 +45,9 @@ before_deploy:
 #  - GOOS=plan9 GOARCH=amd64 go build -o release/finance_plan9_amd64 cmd/finance/main.go
 #  - GOOS=plan9 GOARCH=arm go build -o release/finance_plan9_arm cmd/finance/main.go
 #  - GOOS=solaris GOARCH=amd64 go build -o release/finance_solaris_amd64 cmd/finance/main.go
-  - GOOS=windows GOARCH=386 go build -o release/finance_windows_386 cmd/finance/main.go
+#  - GOOS=windows GOARCH=386 go build -o release/finance_windows_386 cmd/finance/main.go
   - GOOS=windows GOARCH=amd64 go build -o release/finance_windows_amd64 cmd/finance/main.go
-  - GOOS=windows GOARCH=arm go build -o release/finance_windows_arm cmd/finance/main.go
+#  - GOOS=windows GOARCH=arm go build -o release/finance_windows_arm cmd/finance/main.go
 deploy:
   provider: releases
   api_key:
@@ -58,26 +58,26 @@ deploy:
 #    - "release/finance_android_amd64"
 #    - "release/finance_android_arm"
 #    - "release/finance_android_arm64"
-    - "release/finance_darwin_386"
+#    - "release/finance_darwin_386"
     - "release/finance_darwin_amd64"
-    - "release/finance_darwin_arm"
-    - "release/finance_darwin_arm64"
+#    - "release/finance_darwin_arm"
+#    - "release/finance_darwin_arm64"
 #    - "release/finance_dragonfly_amd64"
 #    - "release/finance_freebsd_386"
 #    - "release/finance_freebsd_amd64"
 #    - "release/finance_freebsd_arm"
 #    - "release/finance_js_wasm"
-    - "release/finance_linux_386"
+#    - "release/finance_linux_386"
     - "release/finance_linux_amd64"
-    - "release/finance_linux_arm"
-    - "release/finance_linux_arm64"
-    - "release/finance_linux_mips"
-    - "release/finance_linux_mips64"
-    - "release/finance_linux_mips64le"
-    - "release/finance_linux_mipsle"
-    - "release/finance_linux_ppc64"
-    - "release/finance_linux_ppc64le"
-    - "release/finance_linux_s390x"
+#    - "release/finance_linux_arm"
+#    - "release/finance_linux_arm64"
+#    - "release/finance_linux_mips"
+#    - "release/finance_linux_mips64"
+#    - "release/finance_linux_mips64le"
+#    - "release/finance_linux_mipsle"
+#    - "release/finance_linux_ppc64"
+#    - "release/finance_linux_ppc64le"
+#    - "release/finance_linux_s390x"
 #    - "release/finance_nacl_386"
 #    - "release/finance_nacl_amd64p32"
 #    - "release/finance_nacl_arm"
@@ -91,9 +91,9 @@ deploy:
 #    - "release/finance_plan9_amd64"
 #    - "release/finance_plan9_arm"
 #    - "release/finance_solaris_amd64"
-    - "release/finance_windows_386"
+#    - "release/finance_windows_386"
     - "release/finance_windows_amd64"
-    - "release/finance_windows_arm"
+#    - "release/finance_windows_arm"
   skip_cleanup: true
   on:
     repo: TomWright/finance-planner
