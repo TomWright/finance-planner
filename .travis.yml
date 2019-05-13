@@ -2,6 +2,8 @@ language: go
 go:
   - 1.12.x
 go_import_path: github.com/tomwright/finance-planner
+before_script:
+  - go mod tidy
 script: go test -race ./internal/... -coverprofile=coverage.txt -covermode=atomic
 after_success:
   - bash <(curl -s https://codecov.io/bash)
