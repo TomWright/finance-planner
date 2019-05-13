@@ -2,7 +2,7 @@ language: go
 go:
 - 1.12.x
 go_import_path: github.com/tomwright/finance-planner
-script: go test -race ./ -coverprofile=coverage.txt -covermode=atomic
+script: go test -race ./internal/... -coverprofile=coverage.txt -covermode=atomic
 after_success:
 - bash <(curl -s https://codecov.io/bash)
 deploy:
