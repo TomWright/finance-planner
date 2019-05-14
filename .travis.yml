@@ -22,5 +22,5 @@ deploy:
   skip_cleanup: true
   on:
     repo: TomWright/finance-planner
-    #tags: true
+    tags: true
   overwrite: true
