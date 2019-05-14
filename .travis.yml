@@ -7,6 +7,7 @@ before_script:
   - go mod tidy
 script:
   - go test -race ./internal/... -coverprofile=coverage.txt -covermode=atomic
+  - go list ./...
   - gox -os="linux darwin windows" -arch="amd64" -output="finance.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...
 after_success:
   - bash <(curl -s https://codecov.io/bash)
@@ -21,5 +22,5 @@ deploy:
   skip_cleanup: true
   on:
     repo: TomWright/finance-planner
-    tags: true
+    #tags: true
   overwrite: true
