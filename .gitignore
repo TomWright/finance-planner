@@ -1,2 +1,5 @@
 .idea/
 vendor/
+finance_windows_amd64.exe
+finance_darwin_amd64
+finance_linux_amd64

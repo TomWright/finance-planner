@@ -8,7 +8,7 @@ before_script:
 script:
   - go test -race ./internal/... -coverprofile=coverage.txt -covermode=atomic
   - go list ./...
-  - gox -os="linux darwin windows" -arch="amd64" -output="finance.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...
+  - gox -os="linux darwin windows" -arch="amd64" -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...
   - pwd
   - ls -la
 after_success:
@@ -18,9 +18,9 @@ deploy:
   api_key:
     secure: Q0ZTRI9yxThNB0uutZWW4WY2I4mEQk4nZbnLXJFQDwOs491MypbbGJmaZr9HMkrPzc9v9ev8nV9r+dVZ8C8Xk+snfrL4J3N+P50i5isEI2dmpxGoXk7Fam/UknEKcvTZeM0RVlr7gQT0X78SKdanuNWyHUjQVX0id/fFvatdNHZ++ZL5NStQAPsIFGw69B/4WR7lwrMPi8DPf/VEYjSXGGQl7YWPp4O+45MhBAlH26ffO+mb1PmAtVTpG2eQkG5msrTX7prjPYIQxpsmMc2bCYiwpeENRVFOMmMmhsGQWaK/Rna2MboAlJihF1DAYFp7DbAu85xPF3SH9Ms/3Nqx0KAoh9vvfXETGWJpwIvIKOZf/oHtPUc2KkSiffWtlBe7Qqx0rGwByA8F65zzw5JMJLOtI8qqIvNg+LREgfOqWVw57y2sCDHWpfok3wsAHSgj5LXmXrrIz2G+R6LRcfVrcAOy9vHJTK4k8NjXRjYUthbKtb/zH3ggCORZdc0yQQ3BIr1QobUYW1hxTh3rJre9ozAgSD2nb5iZ2f4wPxMDgYCXjbclf8aVSAwW87AEt8rs51zRtH/qE85L9UjFvVMl43mxzKjKl0hk5JMrXLVBXGf9iybRqt920h80ERTXsrJAd3PccUs1rXVDr/VjCE4X6N3Vma0YfsMjPsp5EV91o94=
   file:
-    - finance.windows.amd64.exe
-    - finance.darwin.amd64
-    - finance.linux.amd64
+    - finance_windows_amd64.exe
+    - finance_darwin_amd64
+    - finance_linux_amd64
   skip_cleanup: true
   on:
     repo: TomWright/finance-planner
