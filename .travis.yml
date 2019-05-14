@@ -9,6 +9,8 @@ script:
   - go test -race ./internal/... -coverprofile=coverage.txt -covermode=atomic
   - go list ./...
   - gox -os="linux darwin windows" -arch="amd64" -output="finance.." -ldflags "-X main.Rev=`git rev-parse --short HEAD`" -verbose ./...
+  - pwd
+  - ls -la
 after_success:
   - bash <(curl -s https://codecov.io/bash)
 deploy:
